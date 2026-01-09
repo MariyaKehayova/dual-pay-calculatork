@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#111827" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<title>Ресто Калкулатор</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- PWA Manifest (inline) -->
+<link rel="manifest" href='data:application/json,{
+"name":"Ресто Калкулатор",
+"short_name":"Ресто",
+"display":"standalone",
+"start_url":".",
+"background_color":"#f5f0e6",
+"theme_color":"#111827",
+"icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect rx=%2290%22 width=%22512%22 height=%22512%22 fill=%22black%22/><text x=%2290%22 y=%22320%22 font-size=%22220%22 fill=%22white%22 font-family=%22Arial%22>€</text><text x=%22290%22 y=%22320%22 font-size=%22180%22 fill=%22white%22 font-family=%22Arial%22>лв</text></svg>","sizes":"512x512","type":"image/svg+xml"}]
+}'>
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f5f0e6;
+  overflow: hidden;
+}
+h1 {
+  font-family: 'Baloo 2', cursive;
+}
+.bg-pattern span {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.08;
+  color: #333;
+  animation: float 18s infinite linear;
+}
+@keyframes float {
+  0% { transform: translate(0,0) rotate(0deg) scale(1); }
+  50% { transform: translate(30px,-40px) rotate(10deg) scale(1.1); }
+  100% { transform: translate(0,0) rotate(0deg) scale(1); }
+}
+</style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen relative">
+
+<!-- Dynamic background -->
+<div class="bg-pattern absolute inset-0">
+  <span style="top:10%;left:15%">€</span>
+  <span style="top:40%;left:60%">лв</span>
+  <span style="top:70%;left:25%">%</span>
+  <span style="top:20%;left:75%">€</span>
+</div>
+
+<!-- App Card -->
+<div class="relative z-10 w-full max-w-sm mx-auto p-6 rounded-3xl shadow-2xl backdrop-blur-xl bg-white/70">
+
+<!-- Logo -->
+<div class="w-16 h-16 bg-black rounded-2xl flex items-center justify-between px-3 mx-auto mb-4">
+  <span class="text-white text-xl">€</span>
+  <span class="text-white text-sm">лв</span>
+</div>
+
+<h1 class="text-center text-2xl mb-6">Ресто Калкулатор</h1>
+
+<!-- Цена -->
+<div class="mb-3">
+  <label class="text-sm">Сума за плащане</label>
+  <div class="flex gap-2">
+    <input id="price" type="number" class="flex-1 p-3 rounded-xl bg-blue-900 text-white" placeholder="0.00">
+    <select id="priceCurrency" class="p-3 rounded-xl">
+      <option value="BGN">лв</option>
+      <option value="EUR">€</option>
+    </select>
+  </div>
+</div>
+
+<!-- Платено -->
+<div class="grid grid-cols-2 gap-2 mb-4">
+  <input id="paidBGN" type="number" class="p-3 rounded-xl" placeholder="Платено в лв">
+  <input id="paidEUR" type="number" class="p-3 rounded-xl" placeholder="Платено в €">
+</div>
+
+<!-- Error -->
+<div id="error" class="hidden bg-red-100 text-red-700 p-3 rounded-xl mb-3 text-sm">
+Недостатъчна сума
+</div>
+
+<!-- Result -->
+<div id="result" class="hidden transition-all">
+  <div class="flex justify-between mb-2">
+    <button onclick="setOut('BGN')" class="px-3 py-1 rounded-lg bg-gray-200">лв</button>
+    <button onclick="setOut('EUR')" class="px-3 py-1 rounded-lg bg-gray-200">€</button>
+  </div>
+  <div class="text-xl font-semibold" id="changeMain"></div>
+  <div class="text-sm text-gray-600" id="changeAlt"></div>
+</div>
+
+<footer class="mt-6 text-center text-xs text-gray-600">
+Курс: 1 EUR = 1.95583 BGN<br>
+Име ©
+</footer>
+
+</div>
+
+<script>
+const RATE = 1.95583;
+let outCurrency = "BGN";
+
+function calc() {
+  const price = parseFloat(priceEl.value) || 0;
+  const paidBGN = parseFloat(paidBGNEl.value) || 0;
+  const paidEUR = parseFloat(paidEUREl.value) || 0;
+
+  let priceBGN = priceCurrency.value === "EUR" ? price * RATE : price;
+  let totalPaid = paidBGN + paidEUR * RATE;
+
+  let change = totalPaid - priceBGN;
+
+  if (change < 0) {
+    error.classList.remove("hidden");
+    result.classList.add("hidden");
+    return;
+  }
+
+  error.classList.add("hidden");
+  result.classList.remove("hidden");
+
+  let main = outCurrency === "BGN" ? change : change / RATE;
+  let alt = outCurrency === "BGN" ? main / RATE : main * RATE;
+
+  changeMain.textContent = `Ресто: ${main.toFixed(2)} ${outCurrency === "BGN" ? "лв" : "€"}`;
+  changeAlt.textContent = `≈ ${alt.toFixed(2)} ${outCurrency === "BGN" ? "€" : "лв"}`;
+}
+
+function setOut(c) {
+  outCurrency = c;
+  calc();
+}
+
+const priceEl = document.getElementById("price");
+const priceCurrency = document.getElementById("priceCurrency");
+const paidBGNEl = document.getElementById("paidBGN");
+const paidEUREl = document.getElementById("paidEUR");
+const error = document.getElementById("error");
+const result = document.getElementById("result");
+const changeMain = document.getElementById("changeMain");
+const changeAlt = document.getElementById("changeAlt");
+
+[priceEl, priceCurrency, paidBGNEl, paidEUREl].forEach(el => el.addEventListener("input", calc));
+</script>
+
+</body>
+</html>
