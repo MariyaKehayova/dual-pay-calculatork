@@ -1,162 +1,184 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#111827" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Калкулатор за ресто</title>
 
-<title>Ресто Калкулатор</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-<!-- Tailwind -->
-<script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- iOS / Android Meta -->
+  <meta name="theme-color" content="#f5f0e8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Ресто" />
 
-<!-- PWA Manifest (inline) -->
-<link rel="manifest" href='data:application/json,{
-"name":"Ресто Калкулатор",
-"short_name":"Ресто",
-"display":"standalone",
-"start_url":".",
-"background_color":"#f5f0e6",
-"theme_color":"#111827",
-"icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect rx=%2290%22 width=%22512%22 height=%22512%22 fill=%22black%22/><text x=%2290%22 y=%22320%22 font-size=%22220%22 fill=%22white%22 font-family=%22Arial%22>€</text><text x=%22290%22 y=%22320%22 font-size=%22180%22 fill=%22white%22 font-family=%22Arial%22>лв</text></svg>","sizes":"512x512","type":"image/svg+xml"}]
-}'>
-
-<style>
-body {
-  font-family: 'Inter', sans-serif;
-  background: #f5f0e6;
-  overflow: hidden;
-}
-h1 {
-  font-family: 'Baloo 2', cursive;
-}
-.bg-pattern span {
-  position: absolute;
-  font-size: 40px;
-  opacity: 0.08;
-  color: #333;
-  animation: float 18s infinite linear;
-}
-@keyframes float {
-  0% { transform: translate(0,0) rotate(0deg) scale(1); }
-  50% { transform: translate(30px,-40px) rotate(10deg) scale(1.1); }
-  100% { transform: translate(0,0) rotate(0deg) scale(1); }
-}
-</style>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f0e8;
+      overflow: hidden;
+    }
+    h1, .logo {
+      font-family: 'Baloo 2', cursive;
+    }
+    .glass {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.75);
+    }
+    .float {
+      animation: float 18s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translate(0,0) rotate(0deg) scale(1); }
+      50% { transform: translate(20px, -30px) rotate(5deg) scale(1.05); }
+      100% { transform: translate(0,0) rotate(0deg) scale(1); }
+    }
+  </style>
 </head>
+<body class="flex items-center justify-center min-h-screen">
 
-<body class="flex items-center justify-center min-h-screen relative">
-
-<!-- Dynamic background -->
-<div class="bg-pattern absolute inset-0">
-  <span style="top:10%;left:15%">€</span>
-  <span style="top:40%;left:60%">лв</span>
-  <span style="top:70%;left:25%">%</span>
-  <span style="top:20%;left:75%">€</span>
-</div>
-
-<!-- App Card -->
-<div class="relative z-10 w-full max-w-sm mx-auto p-6 rounded-3xl shadow-2xl backdrop-blur-xl bg-white/70">
-
-<!-- Logo -->
-<div class="w-16 h-16 bg-black rounded-2xl flex items-center justify-between px-3 mx-auto mb-4">
-  <span class="text-white text-xl">€</span>
-  <span class="text-white text-sm">лв</span>
-</div>
-
-<h1 class="text-center text-2xl mb-6">Ресто Калкулатор</h1>
-
-<!-- Цена -->
-<div class="mb-3">
-  <label class="text-sm">Сума за плащане</label>
-  <div class="flex gap-2">
-    <input id="price" type="number" class="flex-1 p-3 rounded-xl bg-blue-900 text-white" placeholder="0.00">
-    <select id="priceCurrency" class="p-3 rounded-xl">
-      <option value="BGN">лв</option>
-      <option value="EUR">€</option>
-    </select>
+<!-- Динамичен фон -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+  <div class="absolute inset-0 grid grid-cols-6 grid-rows-10 gap-12 opacity-[0.08] text-gray-700 text-4xl">
+    <span class="float">€</span><span class="float">лв</span><span class="float">+</span><span class="float">€</span><span class="float">лв</span><span class="float">+</span>
+    <span class="float">+</span><span class="float">€</span><span class="float">лв</span><span class="float">+</span><span class="float">€</span><span class="float">лв</span>
   </div>
 </div>
 
-<!-- Платено -->
-<div class="grid grid-cols-2 gap-2 mb-4">
-  <input id="paidBGN" type="number" class="p-3 rounded-xl" placeholder="Платено в лв">
-  <input id="paidEUR" type="number" class="p-3 rounded-xl" placeholder="Платено в €">
-</div>
+<!-- App Container -->
+<div class="relative z-10 w-full max-w-md mx-auto p-5 rounded-3xl glass shadow-2xl">
 
-<!-- Error -->
-<div id="error" class="hidden bg-red-100 text-red-700 p-3 rounded-xl mb-3 text-sm">
-Недостатъчна сума
-</div>
-
-<!-- Result -->
-<div id="result" class="hidden transition-all">
-  <div class="flex justify-between mb-2">
-    <button onclick="setOut('BGN')" class="px-3 py-1 rounded-lg bg-gray-200">лв</button>
-    <button onclick="setOut('EUR')" class="px-3 py-1 rounded-lg bg-gray-200">€</button>
+  <!-- Logo -->
+  <div class="flex justify-center mb-4">
+    <div class="logo bg-black text-white rounded-2xl px-5 py-2 flex justify-between w-40 text-xl">
+      <span>лв</span><span>€</span>
+    </div>
   </div>
-  <div class="text-xl font-semibold" id="changeMain"></div>
-  <div class="text-sm text-gray-600" id="changeAlt"></div>
-</div>
 
-<footer class="mt-6 text-center text-xs text-gray-600">
-Курс: 1 EUR = 1.95583 BGN<br>
-Име ©
-</footer>
+  <h1 class="text-center text-2xl mb-6">Калкулатор за ресто</h1>
 
+  <!-- Inputs -->
+  <div class="space-y-4">
+    <div>
+      <label class="text-sm">Сума за плащане</label>
+      <div class="flex">
+        <input id="due" type="number" class="w-full rounded-l-xl px-4 py-3 bg-blue-900 text-white focus:outline-none" />
+        <select id="dueCurrency" class="rounded-r-xl bg-blue-800 text-white px-3">
+          <option value="BGN">BGN</option>
+          <option value="EUR">EUR</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="text-sm">Платено в лв</label>
+      <input id="paidBGN" type="number" class="w-full rounded-xl px-4 py-3 bg-white" />
+    </div>
+
+    <div>
+      <label class="text-sm">Платено в €</label>
+      <input id="paidEUR" type="number" class="w-full rounded-xl px-4 py-3 bg-white" />
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div id="error" class="hidden mt-4 bg-red-100 text-red-700 px-4 py-3 rounded-xl">Недостатъчно платена сума</div>
+
+  <!-- Result -->
+  <div id="result" class="hidden mt-6 transition-all">
+    <div class="flex justify-center mb-3">
+      <button id="showBGN" class="px-4 py-2 rounded-l-xl bg-gray-200">BGN</button>
+      <button id="showEUR" class="px-4 py-2 rounded-r-xl bg-gray-300">EUR</button>
+    </div>
+    <div class="text-center">
+      <div id="changeMain" class="text-2xl font-semibold"></div>
+      <div id="changeSecondary" class="text-sm text-gray-600"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-8 text-center text-xs text-gray-600">
+    <div>Курс: 1 EUR = 1.95583 BGN</div>
+    <div>Име ©</div>
+  </footer>
 </div>
 
 <script>
 const RATE = 1.95583;
-let outCurrency = "BGN";
+const due = document.getElementById('due');
+const dueCurrency = document.getElementById('dueCurrency');
+const paidBGN = document.getElementById('paidBGN');
+const paidEUR = document.getElementById('paidEUR');
+const errorBox = document.getElementById('error');
+const resultBox = document.getElementById('result');
+const changeMain = document.getElementById('changeMain');
+const changeSecondary = document.getElementById('changeSecondary');
+const showBGN = document.getElementById('showBGN');
+const showEUR = document.getElementById('showEUR');
 
-function calc() {
-  const price = parseFloat(priceEl.value) || 0;
-  const paidBGN = parseFloat(paidBGNEl.value) || 0;
-  const paidEUR = parseFloat(paidEUREl.value) || 0;
+let display = 'BGN';
 
-  let priceBGN = priceCurrency.value === "EUR" ? price * RATE : price;
-  let totalPaid = paidBGN + paidEUR * RATE;
+function calculate() {
+  const dueVal = parseFloat(due.value) || 0;
+  const paidBGNVal = parseFloat(paidBGN.value) || 0;
+  const paidEURVal = parseFloat(paidEUR.value) || 0;
 
-  let change = totalPaid - priceBGN;
+  const dueBGN = dueCurrency.value === 'EUR' ? dueVal * RATE : dueVal;
+  const totalPaidBGN = paidBGNVal + paidEURVal * RATE;
 
-  if (change < 0) {
-    error.classList.remove("hidden");
-    result.classList.add("hidden");
+  // Рестото се изчислява като (платено - дължимо)
+  const changeBGN = totalPaidBGN - dueBGN;
+
+  if (changeBGN < 0) {
+    errorBox.classList.remove('hidden');
+    resultBox.classList.add('hidden');
     return;
   }
 
-  error.classList.add("hidden");
-  result.classList.remove("hidden");
+  errorBox.classList.add('hidden');
+  resultBox.classList.remove('hidden');
 
-  let main = outCurrency === "BGN" ? change : change / RATE;
-  let alt = outCurrency === "BGN" ? main / RATE : main * RATE;
-
-  changeMain.textContent = `Ресто: ${main.toFixed(2)} ${outCurrency === "BGN" ? "лв" : "€"}`;
-  changeAlt.textContent = `≈ ${alt.toFixed(2)} ${outCurrency === "BGN" ? "€" : "лв"}`;
+  if (display === 'BGN') {
+    changeMain.textContent = changeBGN.toFixed(2) + ' лв';
+    changeSecondary.textContent = (changeBGN / RATE).toFixed(2) + ' €';
+  } else {
+    changeMain.textContent = (changeBGN / RATE).toFixed(2) + ' €';
+    changeSecondary.textContent = changeBGN.toFixed(2) + ' лв';
+  }
 }
 
-function setOut(c) {
-  outCurrency = c;
-  calc();
-}
+[due, dueCurrency, paidBGN, paidEUR].forEach(el => el.addEventListener('input', calculate));
 
-const priceEl = document.getElementById("price");
-const priceCurrency = document.getElementById("priceCurrency");
-const paidBGNEl = document.getElementById("paidBGN");
-const paidEUREl = document.getElementById("paidEUR");
-const error = document.getElementById("error");
-const result = document.getElementById("result");
-const changeMain = document.getElementById("changeMain");
-const changeAlt = document.getElementById("changeAlt");
+showBGN.onclick = () => { display = 'BGN'; calculate(); };
+showEUR.onclick = () => { display = 'EUR'; calculate(); };
 
-[priceEl, priceCurrency, paidBGNEl, paidEUREl].forEach(el => el.addEventListener("input", calc));
+// PWA Manifest (inline)
+const manifest = {
+  name: 'Калкулатор за ресто',
+  short_name: 'Ресто',
+  start_url: '.',
+  display: 'standalone',
+  background_color: '#f5f0e8',
+  theme_color: '#f5f0e8',
+  icons: [{
+    src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="black"/><text x="80" y="300" font-size="200" fill="white">лв</text><text x="280" y="300" font-size="200" fill="white">€</text></svg>',
+    sizes: '512x512',
+    type: 'image/svg+xml'
+  }]
+};
+
+const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+const manifestURL = URL.createObjectURL(blob);
+const link = document.createElement('link');
+link.rel = 'manifest';
+link.href = manifestURL;
+document.head.appendChild(link);
 </script>
-
 </body>
 </html>
+
